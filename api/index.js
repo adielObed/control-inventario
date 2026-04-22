@@ -38,7 +38,9 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: err.message });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
+}
 
 module.exports = app;
