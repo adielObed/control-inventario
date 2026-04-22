@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from './api.config';
 
 export interface Material {
   _id: string;
@@ -15,7 +16,7 @@ export interface Material {
   providedIn: 'root'
 })
 export class MaterialService {
-  private apiUrl = 'http://localhost:3000/api/materiales';
+  private apiUrl = `${API_BASE_URL}/materiales`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { API_BASE_URL } from './api.config';
 
 export interface Material {
   _id?: string;
@@ -17,7 +18,7 @@ export interface Categoria {
 
 @Injectable({ providedIn: 'root' })
 export class InventarioService {
-  private api = 'http://localhost:3000/api/inventario';
+  private api = `${API_BASE_URL}/inventario`;
 
   constructor(private http: HttpClient) {}
 
