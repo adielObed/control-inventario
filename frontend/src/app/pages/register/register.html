@@ -1,0 +1,40 @@
+<div class="page">
+  <div class="card">
+    <h2>Crear Cuenta</h2>
+
+    <div *ngIf="error"   class="alert alert-error">{{ error }}</div>
+    <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label>Nombre completo</label>
+        <input type="text" formControlName="nombre" placeholder="Tu nombre" />
+        <span *ngIf="form.controls['nombre'].invalid && form.controls['nombre'].touched" class="hint">
+          El nombre es requerido.
+        </span>
+      </div>
+
+      <div class="field">
+        <label>Correo electrónico</label>
+        <input type="email" formControlName="email" placeholder="correo@ejemplo.com" />
+        <span *ngIf="form.controls['email'].invalid && form.controls['email'].touched" class="hint">
+          Ingresa un correo válido.
+        </span>
+      </div>
+
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres" />
+        <span *ngIf="form.controls['password'].invalid && form.controls['password'].touched" class="hint">
+          Mínimo 6 caracteres.
+        </span>
+      </div>
+
+      <button type="submit" [disabled]="form.invalid || loading" class="btn-primary">
+        {{ loading ? 'Registrando...' : 'Registrarse' }}
+      </button>
+    </form>
+
+    <p class="link-text">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+  </div>
+</div>

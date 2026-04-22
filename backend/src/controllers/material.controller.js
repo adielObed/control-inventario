@@ -1,0 +1,60 @@
+const Material = require('../models/Material');
+
+// @desc    Obtener materiales (con filtros opcionales)
+// @route   GET /api/materiales
+// @access  Private
+exports.getMateriales = async (req, res) => {
+  try {
+    const { filter } = req.query; // filter puede ser 'Electrico', 'Mecanico', 'BajoStock'
+    let queryArgs = {};
+
+    if (filter === 'Eléctrico') {
+      queryArgs.categoria = 'Eléctrico';
+    } else if (filter === 'Mecánico') {
+      queryArgs.categoria = 'Mecánico';
+    } else if (filter === 'BajoStock') {
+      queryArgs.$expr = { $lte: ['$stock_actual', '$stock_minimo'] };
+    }
+
+    const materiales = await Material.find(queryArgs);
+    res.json(materiales);
+  } catch (error) {
+    res.status(500).json({ message: 'Error obteniendo materiales', error: error.message });
+  }
+};
+
+// @desc    Crear un material
+// @route   POST /api/materiales
+// @access  Private
+exports.createMaterial = async (req, res) => {
+  try {
+    const { nombre, categoria, stock_actual, stock_minimo, unidad_medida } = req.body;
+    
+    const material = await Material.create({
+      nombre,
+      categoria,
+      stock_actual,
+      stock_minimo,
+      unidad_medida
+    });
+
+    res.status(201).json(material);
+  } catch (error) {
+    res.status(400).json({ message: 'Error creando material', error: error.message });
+  }
+};
+
+// @desc    Actualizar un material
+// @route   PUT /api/materiales/:id
+// @access  Private
+exports.updateMaterial = async (req, res) => {
+  try {
+    const material = await Material.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!material) {
+      return res.status(404).json({ message: 'Material no encontrado' });
+    }
+    res.json(material);
+  } catch (error) {
+    res.status(400).json({ message: 'Error actualizando material', error: error.message });
+  }
+};

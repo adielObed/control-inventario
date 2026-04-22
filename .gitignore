@@ -1,0 +1,12 @@
+# Dependencias
+node_modules/
+dist/
+.angular/
+
+# Datos Sensibles
+.env
+.env.local
+
+# Basura del Sistema
+.DS_Store
+Thumbs.db

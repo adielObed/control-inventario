@@ -1,0 +1,25 @@
+<div class="page">
+  <div class="card">
+    <h2>Iniciar Sesión</h2>
+
+    <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label>Correo electrónico</label>
+        <input type="email" formControlName="email" placeholder="correo@ejemplo.com" />
+      </div>
+
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" formControlName="password" placeholder="Tu contraseña" />
+      </div>
+
+      <button type="submit" [disabled]="form.invalid || loading" class="btn-primary">
+        {{ loading ? 'Ingresando...' : 'Entrar' }}
+      </button>
+    </form>
+
+    <p class="link-text">¿No tienes cuenta? <a routerLink="/register">Regístrate</a></p>
+  </div>
+</div>
