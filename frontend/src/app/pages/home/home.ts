@@ -89,7 +89,6 @@ import autoTable from 'jspdf-autotable';
       .form-box { padding: 1.25rem; }
     }
   `]
-  `]
 })
 export class HomePage implements OnInit {
   materiales: Material[] = [];
@@ -159,7 +158,7 @@ export class HomePage implements OnInit {
 
     let csv = 'CÓDIGO,NOMBRE,CATEGORÍA,STOCK,UNIDAD,ALERTA MÍNIMA\n';
     items.forEach(m => {
-      csv += `${m.codigo || ''},${m.nombre},${m.categoria},${m.stock},${m.unidad},${m.alertaMinima}\n`;
+      csv += (m.codigo || '') + ',' + m.nombre + ',' + m.categoria + ',' + m.stock + ',' + m.unidad + ',' + m.alertaMinima + '\n';
     });
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
