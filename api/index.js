@@ -42,7 +42,16 @@ mongoose.connect(process.env.MONGODB_URI, { family: 4 })
 app.use('/api/users', require('./_src/routes/user.routes'));
 app.use('/api/inventario', require('./_src/routes/inventario.routes'));
 
-app.get('/', (req, res) => res.json({ message: 'API funcionando' }));
+app.get('/api/debug', (req, res) => {
+  res.json({
+    message: 'API funcionando',
+    uri_exists: !!process.env.MONGODB_URI,
+    uri_prefix: process.env.MONGODB_URI ? process.env.MONGODB_URI.substring(0, 15) : 'undefined',
+    mongoose_state: mongoose.connection.readyState
+  });
+});
+
+app.get('/api', (req, res) => res.json({ message: 'API root funcionando' }));
 
 // Error handler
 app.use((err, req, res, next) => {
