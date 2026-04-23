@@ -30,7 +30,7 @@ import autoTable from 'jspdf-autotable';
     .badge-error { background: #feb2b2; color: #9b2c2c; }
     .badge-success { background: #c6f6d5; color: #22543d; }
 
-    button { padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid #e2e8f0; background: white; color: #4a5568; font-size: 0.85rem; }
+    button { padding: 0.2rem 1.0rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid #e2e8f0; background: white; color: #4a5568; font-size: 0.85rem; }
     button:hover { background: #edf2f7; transform: translateY(-1px); }
     .btn-dark { background: #1a202c; color: white; border: none; }
     .btn-pdf { background: #2f855a; color: white; border: none; }
@@ -50,7 +50,7 @@ export class HomePage implements OnInit {
   materiales: Material[] = [];
   categorias: Categoria[] = [];
   historial: any[] = [];
-  
+
   nuevo = { nombre: '', categoria: '', unidad: 'unidades', alertaMinima: 5 };
   nuevaCat = { nombre: '' };
   editando: Material | null = null;
@@ -61,6 +61,7 @@ export class HomePage implements OnInit {
   perfilEditando = { nombre: '', email: '' };
   perfilGuardando = false;
   perfilMensaje = '';
+  nombreUsuario = '';
 
   mostrarFormMaterial = false;
   mostrarFormMov = false;
@@ -68,24 +69,41 @@ export class HomePage implements OnInit {
   mostrarHistorial = false;
 
   constructor(
-    private auth: AuthService, 
-    private inv: InventarioService, 
+    private auth: AuthService,
+    private inv: InventarioService,
     private router: Router,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.cargar();
     this.cargarCategorias();
     this.cargarHistorial();
+    this.cargarUsuarioActual();
+  }
+
+  cargarUsuarioActual() {
+    const payload = this.auth.getTokenPayload();
+    if (payload && payload.id) {
+      this.auth.getUser(payload.id).subscribe((u: any) => {
+        this.nombreUsuario = u.nombre || '';
+        this.cdr.detectChanges();
+      });
+    }
   }
 
   cargar() {
-    this.inv.getMateriales().subscribe(m => this.materiales = m);
+    this.inv.getMateriales().subscribe(m => {
+      this.materiales = m;
+      this.cdr.detectChanges();
+    });
   }
 
   cargarHistorial() {
-    this.inv.getMovimientos().subscribe(h => this.historial = h);
+    this.inv.getMovimientos().subscribe(h => {
+      this.historial = h;
+      this.cdr.detectChanges();
+    });
   }
 
   cargarCategorias() {
@@ -172,14 +190,14 @@ export class HomePage implements OnInit {
           alert('¡Movimiento registrado con éxito!');
           this.cargar();
           this.cargarHistorial();
-          this.movimiento = { 
-            materialId: '', 
-            tipo: 'entrada', 
-            cantidad: 0, 
-            motivo: '', 
-            empresa: '', 
-            persona: '', 
-            fecha: new Date().toISOString().split('T')[0] 
+          this.movimiento = {
+            materialId: '',
+            tipo: 'entrada',
+            cantidad: 0,
+            motivo: '',
+            empresa: '',
+            persona: '',
+            fecha: new Date().toISOString().split('T')[0]
           };
           this.mostrarFormMov = false;
           this.cdr.detectChanges();
@@ -211,11 +229,11 @@ export class HomePage implements OnInit {
           alert('Aún no hay movimientos registrados para generar el reporte.');
           return;
         }
-        
+
         try {
           const doc = new jsPDF();
           doc.text('Historial de Entradas y Salidas', 14, 15);
-          
+
           const data = movs.map(m => [
             m.createdAt ? new Date(m.createdAt).toLocaleDateString() : 'N/A',
             m.materialId ? (m.materialId.nombre || 'Material eliminado') : 'N/A',
@@ -254,14 +272,18 @@ export class HomePage implements OnInit {
     this.perfilEditando = { nombre: '', email: payload.email || '' };
     this.perfilMensaje = 'Cargando datos...';
     this.mostrarEditarPerfil = true;
+    this.cdr.detectChanges();
+    
     // Obtiene los datos frescos del servidor
     this.auth.getUser(payload.id).subscribe({
       next: (u) => {
         this.perfilEditando = { nombre: u.nombre || '', email: u.email || '' };
         this.perfilMensaje = '';
+        this.cdr.detectChanges();
       },
       error: () => {
         this.perfilMensaje = '⚠️ No se pudo cargar el perfil. Edita los datos manualmente.';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -276,14 +298,25 @@ export class HomePage implements OnInit {
     this.perfilGuardando = true;
     this.perfilMensaje = '';
     this.auth.updateUser(payload.id, this.perfilEditando).subscribe({
-      next: () => {
+      next: (res: any) => {
+        console.log('Respuesta del servidor al actualizar perfil:', res);
         this.perfilGuardando = false;
         this.perfilMensaje = '✅ Perfil actualizado correctamente.';
-        setTimeout(() => { this.mostrarEditarPerfil = false; this.perfilMensaje = ''; }, 1500);
+        this.nombreUsuario = res?.nombre || this.perfilEditando.nombre;
+        this.cdr.detectChanges();
+
+        // Forzar la actualización visual
+        setTimeout(() => {
+          this.mostrarEditarPerfil = false;
+          this.perfilMensaje = '';
+          this.cdr.detectChanges();
+        }, 1500);
       },
       error: (err) => {
+        console.error('Error al actualizar perfil:', err);
         this.perfilGuardando = false;
-        this.perfilMensaje = '❌ Error: ' + (err.error?.error || 'No se pudo actualizar el perfil.');
+        this.perfilMensaje = '❌ Error: ' + (err?.error?.error || err.message || 'No se pudo actualizar el perfil.');
+        this.cdr.detectChanges();
       }
     });
   }

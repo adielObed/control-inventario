@@ -1,13 +1,19 @@
 <div class="dashboard">
-  <div class="header">
-    <h1>Control de Inventario / Proyectos</h1>
+  <div class="header" style="display: flex; align-items: center; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <img src="logodiana.jpg" alt="DIANA CORPORACION"
+        style="height: 100px; border-radius: 40px; padding: 0.2rem 1.0rem;" />
+      <h1>Inventario Proyectos</h1>
+    </div>
     <div class="actions">
       <button (click)="cargar()" class="btn-refresh">🔄 Actualizar</button>
-      <button (click)="descargarPDF()" class="btn-pdf">Stock PDF</button>
-      <button (click)="descargarPDFMovimientos()" class="btn-pdf" style="background: #805ad5;">Movimientos PDF</button>
+      <button (click)="descargarPDF()" class="btn-pdf">📥 Stock PDF</button>
+      <button (click)="descargarPDFMovimientos()" class="btn-pdf" style="background: #805ad5;">🔀 Movimientos
+        PDF</button>
       <button (click)="mostrarCategorias = !mostrarCategorias" class="btn-dark">📂 Categorías</button>
-      <button (click)="mostrarFormMaterial = !mostrarFormMaterial" class="btn-dark">+ Nuevo Material</button>
-      <button (click)="abrirEditarPerfil()" style="background: #4299e1; color: white; border: none;">✏️ Mi Perfil</button>
+      <button (click)="mostrarFormMaterial = !mostrarFormMaterial" class="btn-dark">🆕 Nuevo Material</button>
+      <button (click)="abrirEditarPerfil()" style="background: #4299e1; color: white; border: none;">👤 {{ nombreUsuario
+        || 'Mi Perfil' }}</button>
       <button (click)="logout()">Cerrar Sesión</button>
     </div>
   </div>
@@ -24,53 +30,43 @@
     ">
       <div class="header" style="margin-bottom: 1.25rem; border: none; padding: 0;">
         <h3 style="margin: 0; font-size: 1.2rem; color: #1a202c;">✏️ Editar Mi Perfil</h3>
-        <button (click)="cancelarEditarPerfil()" style="border: none; background: none; color: #999; font-size: 1.2rem; cursor: pointer;">&#x2715;</button>
+        <button (click)="cancelarEditarPerfil()"
+          style="border: none; background: none; color: #999; font-size: 1.2rem; cursor: pointer;">&#x2715;</button>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         <div>
-          <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 0.4rem;">NOMBRE</label>
-          <input
-            [(ngModel)]="perfilEditando.nombre"
-            placeholder="Tu nombre"
-            style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; box-sizing: border-box;"
-          />
+          <label
+            style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 0.4rem;">NOMBRE</label>
+          <input [(ngModel)]="perfilEditando.nombre" placeholder="Tu nombre"
+            style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; box-sizing: border-box;" />
         </div>
         <div>
-          <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 0.4rem;">EMAIL</label>
-          <input
-            type="email"
-            [(ngModel)]="perfilEditando.email"
-            placeholder="tu@email.com"
-            style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; box-sizing: border-box;"
-          />
+          <label
+            style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 0.4rem;">EMAIL</label>
+          <input type="email" [(ngModel)]="perfilEditando.email" placeholder="tu@email.com"
+            style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; box-sizing: border-box;" />
         </div>
       </div>
 
-      <p *ngIf="perfilMensaje" style="margin-top: 1rem; font-size: 0.875rem; text-align: center;">{{ perfilMensaje }}</p>
+      <p *ngIf="perfilMensaje" style="margin-top: 1rem; font-size: 0.875rem; text-align: center;">{{ perfilMensaje }}
+      </p>
 
       <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
-        <button
-          (click)="guardarPerfil()"
-          [disabled]="perfilGuardando"
-          style="flex: 1; background: #2b6cb0; color: white; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 700; cursor: pointer;"
-        >
+        <button (click)="guardarPerfil()" [disabled]="perfilGuardando"
+          style="flex: 1; background: #2b6cb0; color: white; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 700; cursor: pointer;">
           {{ perfilGuardando ? 'Guardando...' : 'Guardar Cambios' }}
         </button>
-        <button
-          (click)="cancelarEditarPerfil()"
-          style="flex: 1; background: #edf2f7; color: #4a5568; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer;"
-        >
+        <button (click)="cancelarEditarPerfil()"
+          style="flex: 1; background: #edf2f7; color: #4a5568; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
           Cancelar
         </button>
       </div>
 
       <!-- Zona peligrosa -->
       <hr style="border: none; border-top: 1px solid #fed7d7; margin: 1.5rem 0 1rem;" />
-      <button
-        (click)="eliminarCuenta()"
-        style="width: 100%; background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; padding: 0.65rem; border-radius: 8px; font-weight: 600; cursor: pointer;"
-      >
+      <button (click)="eliminarCuenta()"
+        style="width: 100%; background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; padding: 0.65rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
         🗑️ Eliminar mi cuenta
       </button>
     </div>
@@ -100,7 +96,7 @@
       <h3>{{ editando ? 'Editar Material' : 'Nuevo Material' }}</h3>
       <button (click)="cancelarEdicion()" style="border: none; color: #999;">✕ Cerrar</button>
     </div>
-    
+
     <!-- Grid para Nuevo -->
     <div class="grid" *ngIf="!editando">
       <input [(ngModel)]="nuevo.nombre" placeholder="Nombre del producto" />
@@ -142,10 +138,11 @@
       <input type="date" [(ngModel)]="movimiento.fecha" />
       <input type="number" [(ngModel)]="movimiento.cantidad" placeholder="Cantidad" />
       <input [(ngModel)]="movimiento.motivo" placeholder="Motivo / Observación" />
-      
+
       <!-- Campos extra para Salida -->
       <input *ngIf="movimiento.tipo === 'salida'" [(ngModel)]="movimiento.empresa" placeholder="Nombre de la Empresa" />
-      <input *ngIf="movimiento.tipo === 'salida'" [(ngModel)]="movimiento.persona" placeholder="Persona que lo retiró" />
+      <input *ngIf="movimiento.tipo === 'salida'" [(ngModel)]="movimiento.persona"
+        placeholder="Persona que lo retiró" />
     </div>
     <button (click)="registrarMovimiento()" class="btn-dark">Confirmar</button>
   </div>

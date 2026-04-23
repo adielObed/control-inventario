@@ -47,6 +47,7 @@ exports.create = async (req, res) => {
 
 // PUT /api/users/:id — Actualizar
 exports.update = async (req, res) => {
+  console.log(`Intentando actualizar usuario ${req.params.id}:`, req.body);
   try {
     const { nombre, email } = req.body;
     const user = await User.findByIdAndUpdate(

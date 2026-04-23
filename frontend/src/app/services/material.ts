@@ -7,9 +7,9 @@ export interface Material {
   _id: string;
   nombre: string;
   categoria: 'Eléctrico' | 'Mecánico';
-  stock_actual: number;
-  stock_minimo: number;
-  unidad_medida: string;
+  stock: number;
+  alertaMinima: number;
+  unidad: string;
 }
 
 @Injectable({
@@ -18,7 +18,11 @@ export interface Material {
 export class MaterialService {
   private apiUrl = `${API_BASE_URL}/materiales`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+
+  updateMaterial(id: string, material: Partial<Material>): Observable<Material> {
+    return this.http.put<Material>(`${this.apiUrl}/${id}`, material);
+  }
 
   getMateriales(categoria?: string): Observable<Material[]> {
     const url = categoria ? `${this.apiUrl}?categoria=${categoria}` : this.apiUrl;

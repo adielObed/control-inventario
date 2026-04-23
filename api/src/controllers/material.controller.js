@@ -13,7 +13,7 @@ exports.getMateriales = async (req, res) => {
     } else if (filter === 'Mecánico') {
       queryArgs.categoria = 'Mecánico';
     } else if (filter === 'BajoStock') {
-      queryArgs.$expr = { $lte: ['$stock_actual', '$stock_minimo'] };
+      queryArgs.$expr = { $lte: ['$stock', '$alertaMinima'] };
     }
 
     const materiales = await Material.find(queryArgs);
@@ -28,14 +28,14 @@ exports.getMateriales = async (req, res) => {
 // @access  Private
 exports.createMaterial = async (req, res) => {
   try {
-    const { nombre, categoria, stock_actual, stock_minimo, unidad_medida } = req.body;
-    
+    const { nombre, categoria, stock, alertaMinima, unidad } = req.body;
+
     const material = await Material.create({
       nombre,
       categoria,
-      stock_actual,
-      stock_minimo,
-      unidad_medida
+      stock,
+      alertaMinima,
+      unidad
     });
 
     res.status(201).json(material);
