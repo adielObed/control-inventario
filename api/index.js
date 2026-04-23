@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const User = require('./src/models/User');
+const User = require('./_src/models/User');
 
 dotenv.config();
 
@@ -39,8 +39,8 @@ mongoose.connect(process.env.MONGODB_URI, { family: 4 })
   .catch(err => console.error('Error MongoDB (Catch):', err.message));
 
 // Rutas
-app.use('/api/users', require('./src/routes/user.routes'));
-app.use('/api/inventario', require('./src/routes/inventario.routes'));
+app.use('/api/users', require('./_src/routes/user.routes'));
+app.use('/api/inventario', require('./_src/routes/inventario.routes'));
 
 app.get('/', (req, res) => res.json({ message: 'API funcionando' }));
 
