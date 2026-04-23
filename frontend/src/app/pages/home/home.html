@@ -1,5 +1,5 @@
 <div class="dashboard">
-  <div class="header" style="display: flex; align-items: center; gap: 1rem;">
+  <div class="header header-main" style="display: flex; align-items: center; gap: 1rem;">
     <div style="display: flex; align-items: center; gap: 1rem;">
       <img src="logodiana.jpg" alt="DIANA CORPORACION"
         style="height: 100px; border-radius: 40px; padding: 0.2rem 1.0rem;" />
@@ -151,6 +151,7 @@
   <div class="header" style="margin-top: 2rem;">
     <h3>Inventario Actual</h3>
   </div>
+  <div class="table-responsive">
   <table>
     <thead>
       <tr>
@@ -182,13 +183,15 @@
       </tr>
     </tbody>
   </table>
+  </div>
 
   <!-- Historial de Movimientos (NUEVO) -->
   <div class="header" style="margin-top: 4rem;">
     <h3>Historial Reciente de Movimientos</h3>
     <button (click)="cargarHistorial()">🔄 Actualizar Historial</button>
   </div>
-  <table style="margin-bottom: 5rem;">
+  <div class="table-responsive" style="margin-bottom: 5rem;">
+  <table>
     <thead>
       <tr>
         <th>Fecha</th>
@@ -216,6 +219,7 @@
       </tr>
     </tbody>
   </table>
+  </div>
 
   <p *ngIf="materiales.length === 0" style="text-align: center; margin-top: 2rem; color: #666;">
     No hay materiales registrados.

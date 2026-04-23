@@ -44,6 +44,19 @@ import autoTable from 'jspdf-autotable';
     .cat-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
     .cat-item { background: #edf2f7; padding: 0.4rem 0.8rem; border-radius: 20px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
     .cat-del { color: #e53e3e; cursor: pointer; font-weight: bold; }
+    
+    .table-responsive { width: 100%; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .table-responsive table { box-shadow: none; } /* Remove shadow from inner table to avoid double shadow */
+
+    @media (max-width: 768px) {
+      .header-main { flex-direction: column; align-items: flex-start !important; gap: 1.5rem !important; }
+      .header-main .actions { flex-wrap: wrap; justify-content: flex-start; }
+      .header-main img { height: 70px !important; }
+      .header-main h1 { font-size: 1.5rem !important; }
+      .dashboard { padding: 1rem; }
+      .grid { grid-template-cols: 1fr; }
+      .form-box { padding: 1.25rem; }
+    }
   `]
 })
 export class HomePage implements OnInit {
