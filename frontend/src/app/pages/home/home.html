@@ -121,8 +121,12 @@
 
       <!-- Tabla de Materiales -->
       <div class="header" style="margin-top: 0; align-items: flex-end;">
-        <div style="flex: 1;">
-          <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por código, nombre o categoría..." class="search-input" style="margin-bottom: 0;" />
+        <div style="flex: 1; display: flex; gap: 1rem; flex-wrap: wrap;">
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por código o nombre..." class="search-input" style="margin-bottom: 0; flex: 2; min-width: 200px;" />
+          <select [(ngModel)]="filtroCategoria" class="search-input" style="margin-bottom: 0; flex: 1; min-width: 150px;">
+            <option value="">Todas las Categorías</option>
+            <option *ngFor="let c of categorias" [value]="c.nombre">{{ c.nombre }}</option>
+          </select>
         </div>
         <div class="actions">
           <button (click)="cargar()" class="btn-refresh">🔄 Refrescar</button>

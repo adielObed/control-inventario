@@ -103,16 +103,26 @@ export class HomePage implements OnInit {
 
   // Search and selection
   searchTerm = '';
+  filtroCategoria = '';
   selectedIds = new Set<string>();
 
   get filteredMateriales() {
-    if (!this.searchTerm) return this.materiales;
-    const lower = this.searchTerm.toLowerCase();
-    return this.materiales.filter(m => 
-      m.nombre.toLowerCase().includes(lower) || 
-      (m.codigo && m.codigo.toLowerCase().includes(lower)) ||
-      m.categoria.toLowerCase().includes(lower)
-    );
+    let result = this.materiales;
+    
+    if (this.filtroCategoria) {
+      result = result.filter(m => m.categoria === this.filtroCategoria);
+    }
+
+    if (this.searchTerm) {
+      const lower = this.searchTerm.toLowerCase();
+      result = result.filter(m => 
+        m.nombre.toLowerCase().includes(lower) || 
+        (m.codigo && m.codigo.toLowerCase().includes(lower)) ||
+        m.categoria.toLowerCase().includes(lower)
+      );
+    }
+    
+    return result;
   }
 
   toggleSelection(id: string) {
