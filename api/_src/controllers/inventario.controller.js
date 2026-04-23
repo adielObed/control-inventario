@@ -14,9 +14,32 @@ exports.getMateriales = async (req, res) => {
 
 exports.createMaterial = async (req, res) => {
   try {
-    const material = await Material.create(req.body);
+    const { nombre, categoria, stock, alertaMinima, unidad } = req.body;
+
+    // Generar código automático de 4 dígitos (solo números)
+    // Buscamos el último que tenga un código numérico
+    const lastMaterial = await Material.findOne({ codigo: { $regex: /^[0-9]+$/ } }, {}, { sort: { codigo: -1 } });
+    
+    let nextCode = '0001';
+    if (lastMaterial && lastMaterial.codigo) {
+      const currentNum = parseInt(lastMaterial.codigo, 10);
+      if (!isNaN(currentNum)) {
+        nextCode = String(currentNum + 1).padStart(4, '0');
+      }
+    }
+
+    const material = await Material.create({
+      codigo: nextCode,
+      nombre,
+      categoria,
+      stock: stock || 0,
+      alertaMinima: alertaMinima || 5,
+      unidad: unidad || 'Unidad'
+    });
+
     res.status(201).json(material);
   } catch (err) {
+    console.error('Error al crear material:', err.message);
     res.status(400).json({ error: err.message });
   }
 };
