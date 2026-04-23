@@ -37,7 +37,7 @@ import autoTable from 'jspdf-autotable';
     .dashboard-content { padding: 2rem; }
     
     /* ORIGINAL STYLES ADAPTED */
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
     .header h3 { color: #1a202c; font-size: 1.4rem; font-weight: 700; margin: 0; }
     .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
     
@@ -53,12 +53,12 @@ import autoTable from 'jspdf-autotable';
     .badge-error { background: #e53e3e; color: white; box-shadow: 0 2px 4px rgba(229, 62, 62, 0.2); }
     .badge-success { background: #38a169; color: white; box-shadow: 0 2px 4px rgba(56, 161, 105, 0.2); }
 
-    button { padding: 0.4rem 1.0rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid #e2e8f0; background: white; color: #4a5568; font-size: 0.85rem; }
+    button { padding: 0.5rem 1.0rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid #e2e8f0; background: white; color: #4a5568; font-size: 0.85rem; }
     button:hover { background: #edf2f7; transform: translateY(-1px); }
     .btn-dark { background: #1a202c; color: white; border: none; }
     .btn-pdf { background: #2f855a; color: white; border: none; }
     .btn-excel { background: #276749; color: white; border: none; }
-    .btn-refresh { background: #3182ce; color: white; border: none; padding: 0.6rem 1.2rem; }
+    .btn-refresh { background: #3182ce; color: white; border: none; padding: 0.8rem 1.1rem; }
     .btn-danger { background: #e53e3e; color: white; border: none; }
 
     .form-box { background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
@@ -108,20 +108,20 @@ export class HomePage implements OnInit {
 
   get filteredMateriales() {
     let result = this.materiales;
-    
+
     if (this.filtroCategoria) {
       result = result.filter(m => m.categoria === this.filtroCategoria);
     }
 
     if (this.searchTerm) {
       const lower = this.searchTerm.toLowerCase();
-      result = result.filter(m => 
-        m.nombre.toLowerCase().includes(lower) || 
+      result = result.filter(m =>
+        m.nombre.toLowerCase().includes(lower) ||
         (m.codigo && m.codigo.toLowerCase().includes(lower)) ||
         m.categoria.toLowerCase().includes(lower)
       );
     }
-    
+
     return result;
   }
 
@@ -148,10 +148,10 @@ export class HomePage implements OnInit {
   }
 
   exportarExcel() {
-    const items = this.selectedIds.size > 0 
+    const items = this.selectedIds.size > 0
       ? this.materiales.filter(m => m._id && this.selectedIds.has(m._id))
       : this.materiales;
-    
+
     if (items.length === 0) {
       alert('No hay items para exportar');
       return;
@@ -349,7 +349,7 @@ export class HomePage implements OnInit {
   }
 
   descargarPDF() {
-    const items = this.selectedIds.size > 0 
+    const items = this.selectedIds.size > 0
       ? this.materiales.filter(m => m._id && this.selectedIds.has(m._id))
       : this.materiales;
 
@@ -416,7 +416,7 @@ export class HomePage implements OnInit {
     this.perfilMensaje = 'Cargando datos...';
     this.mostrarEditarPerfil = true;
     this.cdr.detectChanges();
-    
+
     // Obtiene los datos frescos del servidor
     this.auth.getUser(payload.id).subscribe({
       next: (u) => {
