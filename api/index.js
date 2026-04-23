@@ -22,9 +22,13 @@ app.use((req, res, next) => {
 });
 
 // Conectar a MongoDB Atlas
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Conectado a MongoDB Atlas'))
-  .catch(err => console.error('Error MongoDB:', err.message));
+mongoose.connection.on('error', err => console.error('Error de conexión Mongoose:', err));
+mongoose.connection.on('disconnected', () => console.log('Mongoose desconectado'));
+mongoose.connection.on('connected', () => console.log('Mongoose conectado a:', mongoose.connection.name));
+
+mongoose.connect(process.env.MONGODB_URI, { family: 4 })
+  .then(() => console.log('Conectado a MongoDB Atlas (Promesa resuelta)'))
+  .catch(err => console.error('Error MongoDB (Catch):', err.message));
 
 // Rutas
 app.use('/api/users', require('./src/routes/user.routes'));
