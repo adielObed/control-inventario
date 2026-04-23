@@ -13,30 +13,36 @@ app.use(express.json());
 
 // Logger simple removido para evitar problemas de finalización de peticiones
 
-// Conectar a MongoDB Atlas
-mongoose.connection.on('error', err => console.error('Error de conexión Mongoose:', err));
-mongoose.connection.on('disconnected', () => console.log('Mongoose desconectado'));
-mongoose.connection.on('connected', () => console.log('Mongoose conectado a:', mongoose.connection.name));
+// Conectar a MongoDB Atlas (Serverless Safe)
+let cachedDb = null;
 
-mongoose.connect(process.env.MONGODB_URI, { family: 4 })
-  .then(async () => {
-    console.log('Conectado a MongoDB Atlas (Promesa resuelta)');
-    try {
-      const admin = mongoose.connection.db.admin();
-      const dbs = await admin.listDatabases();
-      console.log('Bases de datos disponibles:', dbs.databases.map(d => d.name));
-      
-      for (const dbName of dbs.databases.map(d => d.name)) {
-        if (['admin', 'local', 'config'].includes(dbName)) continue;
-        const db = mongoose.connection.useDb(dbName);
-        const count = await db.collection('users').countDocuments();
-        console.log(`Base de datos "${dbName}" -> Colección "users" tiene ${count} documentos.`);
-      }
-    } catch (e) {
-      console.error('Prueba de conexión fallida:', e.message);
-    }
-  })
-  .catch(err => console.error('Error MongoDB (Catch):', err.message));
+async function connectDB() {
+  if (cachedDb) {
+    return cachedDb;
+  }
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
+  
+  console.log('Creando nueva conexión a MongoDB...');
+  // Remover family: 4 que puede causar problemas en Vercel
+  const conn = await mongoose.connect(process.env.MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000,
+  });
+  cachedDb = conn;
+  return conn;
+}
+
+// Middleware para asegurar conexión en cada petición (útil para Vercel)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('Error conectando a DB:', error.message);
+    res.status(500).json({ error: 'Database connection failed', details: error.message });
+  }
+});
 
 // Rutas
 app.use('/api/users', require('./_src/routes/user.routes'));
