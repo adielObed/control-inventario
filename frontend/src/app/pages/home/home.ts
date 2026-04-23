@@ -48,22 +48,23 @@ import autoTable from 'jspdf-autotable';
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: #fbfcfe; }
 
-    .alert-row td { background: #fff5f5 !important; }
-    .badge { padding: 0.35rem 0.65rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; }
-    .badge-error { background: #feb2b2; color: #9b2c2c; }
-    .badge-success { background: #c6f6d5; color: #22543d; }
+    .alert-row td { background: #fff5f5 !important; border-bottom: 1px solid #feb2b2; }
+    .badge { padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-error { background: #e53e3e; color: white; box-shadow: 0 2px 4px rgba(229, 62, 62, 0.2); }
+    .badge-success { background: #38a169; color: white; box-shadow: 0 2px 4px rgba(56, 161, 105, 0.2); }
 
     button { padding: 0.4rem 1.0rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid #e2e8f0; background: white; color: #4a5568; font-size: 0.85rem; }
     button:hover { background: #edf2f7; transform: translateY(-1px); }
     .btn-dark { background: #1a202c; color: white; border: none; }
     .btn-pdf { background: #2f855a; color: white; border: none; }
     .btn-excel { background: #276749; color: white; border: none; }
-    .btn-refresh { background: #3182ce; color: white; border: none; }
+    .btn-refresh { background: #3182ce; color: white; border: none; padding: 0.6rem 1.2rem; }
     .btn-danger { background: #e53e3e; color: white; border: none; }
 
     .form-box { background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
     .grid { display: grid; grid-template-cols: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
-    input, select { padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; outline: none; }
+    input, select { padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; outline: none; transition: all 0.2s; }
+    input:focus, select:focus { border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1); }
     
     .search-input { width: 100%; max-width: 400px; margin-bottom: 1rem; padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid #cbd5e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
@@ -75,8 +76,8 @@ import autoTable from 'jspdf-autotable';
     .table-responsive table { box-shadow: none; }
 
     /* TYPE COLORS FOR SELECT */
-    .color-entrada { color: #2f855a !important; font-weight: bold; }
-    .color-salida { color: #e53e3e !important; font-weight: bold; }
+    .color-entrada { background-color: #f0fff4 !important; color: #2f855a !important; font-weight: bold; border: 2px solid #2f855a !important; }
+    .color-salida { background-color: #fff5f5 !important; color: #e53e3e !important; font-weight: bold; border: 2px solid #e53e3e !important; }
 
     @media (max-width: 768px) {
       .app-layout { flex-direction: column; }
@@ -156,9 +157,9 @@ export class HomePage implements OnInit {
       return;
     }
 
-    let csv = 'CÓDIGO,NOMBRE,CATEGORÍA,STOCK,UNIDAD,ALERTA MÍNIMA\n';
+    let csv = '\ufeffCÓDIGO;NOMBRE;CATEGORÍA;STOCK;UNIDAD;ALERTA MÍNIMA\n';
     items.forEach(m => {
-      csv += (m.codigo || '') + ',' + m.nombre + ',' + m.categoria + ',' + m.stock + ',' + m.unidad + ',' + m.alertaMinima + '\n';
+      csv += (m.codigo || '') + ';' + m.nombre + ';' + m.categoria + ';' + m.stock + ';' + m.unidad + ';' + m.alertaMinima + '\n';
     });
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -250,16 +251,36 @@ export class HomePage implements OnInit {
   }
 
   guardarMaterial() {
+    const data = this.editando || this.nuevo;
+    if (!data.nombre || !data.categoria) {
+      alert('Error: El nombre y la categoría son obligatorios.');
+      return;
+    }
+
     if (this.editando && this.editando._id) {
-      this.inv.actualizarMaterial(this.editando._id, this.editando).subscribe(() => {
-        this.cargar();
-        this.cancelarEdicion();
+      this.inv.actualizarMaterial(this.editando._id, this.editando).subscribe({
+        next: () => {
+          alert('¡Producto actualizado con éxito!');
+          this.cargar();
+          this.cancelarEdicion();
+        },
+        error: (err) => {
+          console.error('Error al actualizar:', err);
+          alert('No se pudo actualizar el producto.');
+        }
       });
     } else {
-      this.inv.crearMaterial(this.nuevo).subscribe(() => {
-        this.cargar();
-        this.nuevo = { nombre: '', categoria: '', stock: 0, unidad: 'Unidad', alertaMinima: 5 };
-        this.mostrarFormMaterial = false;
+      this.inv.crearMaterial(this.nuevo).subscribe({
+        next: (res: any) => {
+          alert('¡Producto guardado con éxito! Código asignado: ' + (res.codigo || 'N/A'));
+          this.cargar();
+          this.nuevo = { nombre: '', categoria: '', stock: 0, unidad: 'Unidad', alertaMinima: 5 };
+          this.mostrarFormMaterial = false;
+        },
+        error: (err) => {
+          console.error('Error al crear:', err);
+          alert('No se pudo guardar el producto. Verifica la conexión o los datos.');
+        }
       });
     }
   }

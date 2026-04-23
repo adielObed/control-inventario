@@ -2,27 +2,30 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-header">
-       <img src="logodiana.jpg" alt="Logo" class="sidebar-logo" style="background: white; padding: 2px;"/>
-       <h2>INVENTARIOS</h2>
+      <img src="logodiana.jpg" alt="Logo" class="sidebar-logo" style="background: white; padding: 2px;" />
+      <h2>INVENTARIO</h2>
     </div>
     <ul class="sidebar-menu">
-       <li><a (click)="mostrarFormMaterial=false; mostrarCategorias=false" [class.active]="!mostrarFormMaterial && !mostrarCategorias"><i class="icon">📦</i> Inventario</a></li>
-       <li><a (click)="mostrarCategorias = !mostrarCategorias" [class.active]="mostrarCategorias"><i class="icon">📂</i> Categorías</a></li>
-       <li><a (click)="mostrarFormMaterial = true; editando=null; mostrarCategorias=false" [class.active]="mostrarFormMaterial && !editando"><i class="icon">🆕</i> Nuevo Producto</a></li>
-       <li style="margin-top: 2rem;"><a (click)="abrirEditarPerfil()"><i class="icon">👤</i> Mi Perfil</a></li>
-       <li><a (click)="logout()"><i class="icon">🚪</i> Salir</a></li>
+      <li><a (click)="mostrarFormMaterial=false; mostrarCategorias=false"
+          [class.active]="!mostrarFormMaterial && !mostrarCategorias"><i class="icon">📦</i> Inventario</a></li>
+      <li><a (click)="mostrarCategorias = !mostrarCategorias" [class.active]="mostrarCategorias"><i class="icon">📂</i>
+          Categorías</a></li>
+      <li><a (click)="mostrarFormMaterial = true; editando=null; mostrarCategorias=false"
+          [class.active]="mostrarFormMaterial && !editando"><i class="icon">🆕</i> Nuevo Producto</a></li>
+      <li style="margin-top: 2rem;"><a (click)="abrirEditarPerfil()"><i class="icon">👤</i> Mi Perfil</a></li>
+      <li><a (click)="logout()"><i class="icon">🚪</i> Salir</a></li>
     </ul>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="main-content">
     <div class="topbar">
-       <h1>Sistema web de inventarios</h1>
-       <div class="user-badge">👤 {{ nombreUsuario || 'Admin' }}</div>
+      <h1>Inventario Proyectos</h1>
+      <div class="user-badge">👤 {{ nombreUsuario || 'Admin' }}</div>
     </div>
-    
+
     <div class="dashboard-content">
-      
+
       <!-- Modal Editar Perfil -->
       <div *ngIf="mostrarEditarPerfil" style="
         position: fixed; inset: 0; background: rgba(0,0,0,0.4);
@@ -54,7 +57,8 @@
             </div>
           </div>
 
-          <p *ngIf="perfilMensaje" style="margin-top: 1rem; font-size: 0.875rem; text-align: center; color: #3182ce;">{{ perfilMensaje }}
+          <p *ngIf="perfilMensaje" style="margin-top: 1rem; font-size: 0.875rem; text-align: center; color: #3182ce;">{{
+            perfilMensaje }}
           </p>
 
           <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
@@ -122,8 +126,10 @@
       <!-- Tabla de Materiales -->
       <div class="header" style="margin-top: 0; align-items: flex-end;">
         <div style="flex: 1; display: flex; gap: 1rem; flex-wrap: wrap;">
-          <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por código o nombre..." class="search-input" style="margin-bottom: 0; flex: 2; min-width: 200px;" />
-          <select [(ngModel)]="filtroCategoria" class="search-input" style="margin-bottom: 0; flex: 1; min-width: 150px;">
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por código o nombre..." class="search-input"
+            style="margin-bottom: 0; flex: 2; min-width: 200px;" />
+          <select [(ngModel)]="filtroCategoria" class="search-input"
+            style="margin-bottom: 0; flex: 1; min-width: 150px;">
             <option value="">Todas las Categorías</option>
             <option *ngFor="let c of categorias" [value]="c.nombre">{{ c.nombre }}</option>
           </select>
@@ -136,96 +142,104 @@
       </div>
 
       <div class="table-responsive">
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 40px; text-align: center;"><input type="checkbox" [checked]="isAllSelected()" (change)="toggleAll()"/></th>
-            <th>Código</th>
-            <th>Producto</th>
-            <th>Categoría</th>
-            <th>Stock</th>
-            <th>Unidad</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <ng-container *ngFor="let m of filteredMateriales">
-            <tr [class.alert-row]="m.stock <= m.alertaMinima">
-              <td style="text-align: center;"><input type="checkbox" [checked]="selectedIds.has(m._id!)" (change)="toggleSelection(m._id!)"/></td>
-              <td><b>{{ m.codigo || '-' }}</b></td>
-              <td>{{ m.nombre }}</td>
-              <td>{{ m.categoria }}</td>
-              <td>{{ m.stock }}</td>
-              <td>{{ m.unidad }}</td>
-              <td>
-                <span *ngIf="m.stock <= m.alertaMinima" class="badge badge-error">BAJO STOCK</span>
-                <span *ngIf="m.stock > m.alertaMinima" class="badge badge-success">OK</span>
-              </td>
-              <td>
-                <div class="actions">
-                  <button (click)="abrirMovimiento(m)" title="Mover" style="background: #4299e1; color: white; border: none;">Mover</button>
-                  <button (click)="abrirEditar(m)" title="Editar" style="background: #ed8936; color: white; border: none;">Editar</button>
-                  <button (click)="eliminarMaterial(m._id!)" class="btn-danger" title="Eliminar">🗑️</button>
-                </div>
-              </td>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;"><input type="checkbox" [checked]="isAllSelected()"
+                  (change)="toggleAll()" /></th>
+              <th>Código</th>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Stock</th>
+              <th>Unidad</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let m of filteredMateriales">
+              <tr [class.alert-row]="m.stock <= m.alertaMinima">
+                <td style="text-align: center;"><input type="checkbox" [checked]="selectedIds.has(m._id!)"
+                    (change)="toggleSelection(m._id!)" /></td>
+                <td><b>{{ m.codigo || '-' }}</b></td>
+                <td>{{ m.nombre }}</td>
+                <td>{{ m.categoria }}</td>
+                <td>{{ m.stock }}</td>
+                <td>{{ m.unidad }}</td>
+                <td>
+                  <span *ngIf="m.stock <= m.alertaMinima" class="badge badge-error">BAJO STOCK</span>
+                  <span *ngIf="m.stock > m.alertaMinima" class="badge badge-success">OK</span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <button (click)="abrirMovimiento(m)" title="Mover"
+                      style="background: #4299e1; color: white; border: none;">Mover</button>
+                    <button (click)="abrirEditar(m)" title="Editar"
+                      style="background: #ed8936; color: white; border: none;">Editar</button>
+                    <button (click)="eliminarMaterial(m._id!)" class="btn-danger" title="Eliminar">🗑️</button>
+                  </div>
+                </td>
+              </tr>
 
-            <!-- Fila de Edición Inline -->
-            <tr *ngIf="editando && editando._id === m._id">
-              <td colspan="8" style="background: #ebf8ff; padding: 1.5rem;">
-                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                  <h4 style="margin: 0; color: #2b6cb0;">✏️ Editando: {{ m.nombre }}</h4>
-                  <div class="grid">
-                    <input [(ngModel)]="editando.nombre" placeholder="Nombre" />
-                    <select [(ngModel)]="editando.categoria">
-                      <option *ngFor="let c of categorias" [value]="c.nombre">{{ c.nombre }}</option>
-                    </select>
-                    <input type="number" [(ngModel)]="editando.stock" placeholder="Stock Actual" />
-                    <select [(ngModel)]="editando.unidad">
-                      <option value="Unidad">Unidad</option>
-                      <option value="Metros">Metros</option>
-                      <option value="Kilogramos">Kilogramos</option>
-                      <option value="Litros">Litros</option>
-                    </select>
-                    <input type="number" [(ngModel)]="editando.alertaMinima" placeholder="Alerta Mínima" />
+              <!-- Fila de Edición Inline -->
+              <tr *ngIf="editando && editando._id === m._id">
+                <td colspan="8" style="background: #ebf8ff; padding: 1.5rem;">
+                  <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <h4 style="margin: 0; color: #2b6cb0;">✏️ Editando: {{ m.nombre }}</h4>
+                    <div class="grid">
+                      <input [(ngModel)]="editando.nombre" placeholder="Nombre" />
+                      <select [(ngModel)]="editando.categoria">
+                        <option *ngFor="let c of categorias" [value]="c.nombre">{{ c.nombre }}</option>
+                      </select>
+                      <input type="number" [(ngModel)]="editando.stock" placeholder="Stock Actual" />
+                      <select [(ngModel)]="editando.unidad">
+                        <option value="Unidad">Unidad</option>
+                        <option value="Metros">Metros</option>
+                        <option value="Kilogramos">Kilogramos</option>
+                        <option value="Litros">Litros</option>
+                      </select>
+                      <input type="number" [(ngModel)]="editando.alertaMinima" placeholder="Alerta Mínima" />
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <button (click)="guardarMaterial()" class="btn-dark">Guardar Cambios</button>
+                      <button (click)="cancelarEdicion()">Cancelar</button>
+                    </div>
                   </div>
-                  <div style="display: flex; gap: 0.5rem;">
-                    <button (click)="guardarMaterial()" class="btn-dark">Guardar Cambios</button>
-                    <button (click)="cancelarEdicion()">Cancelar</button>
-                  </div>
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
 
-            <!-- Fila de Movimiento Inline -->
-            <tr *ngIf="mostrarFormMov && movimiento.materialId === m._id">
-              <td colspan="8" style="background: #f0fff4; padding: 1.5rem;">
-                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                  <h4 style="margin: 0; color: #2f855a;">📦 Registrar Movimiento: {{ m.nombre }}</h4>
-                  <div class="grid">
-                    <select [(ngModel)]="movimiento.tipo" [ngClass]="movimiento.tipo === 'entrada' ? 'color-entrada' : 'color-salida'" style="border: 2px solid #cbd5e0;">
-                      <option value="entrada" class="color-entrada">Entrada (+)</option>
-                      <option value="salida" class="color-salida">Salida (-)</option>
-                    </select>
-                    <input type="date" [(ngModel)]="movimiento.fecha" />
-                    <input type="number" [(ngModel)]="movimiento.cantidad" placeholder="Cantidad" />
-                    <input [(ngModel)]="movimiento.motivo" placeholder="Motivo / Observación" />
-                    <input *ngIf="movimiento.tipo === 'salida'" [(ngModel)]="movimiento.empresa" placeholder="Empresa (Opcional)" />
-                    <input *ngIf="movimiento.tipo === 'salida'" [(ngModel)]="movimiento.persona" placeholder="Persona (Opcional)" />
+              <!-- Fila de Movimiento Inline -->
+              <tr *ngIf="mostrarFormMov && movimiento.materialId === m._id">
+                <td colspan="8" style="background: #f0fff4; padding: 1.5rem;">
+                  <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <h4 style="margin: 0; color: #2f855a;">📦 Registrar Movimiento: {{ m.nombre }}</h4>
+                    <div class="grid">
+                      <select [(ngModel)]="movimiento.tipo"
+                        [ngClass]="movimiento.tipo === 'entrada' ? 'color-entrada' : 'color-salida'"
+                        style="border: 2px solid #cbd5e0;">
+                        <option value="entrada" class="color-entrada">Entrada (+)</option>
+                        <option value="salida" class="color-salida">Salida (-)</option>
+                      </select>
+                      <input type="date" [(ngModel)]="movimiento.fecha" />
+                      <input type="number" [(ngModel)]="movimiento.cantidad" placeholder="Cantidad" />
+                      <input [(ngModel)]="movimiento.motivo" placeholder="Motivo / Observación" />
+                      <input *ngIf="movimiento.tipo === 'salida'" [(ngModel)]="movimiento.empresa"
+                        placeholder="Empresa (Opcional)" />
+                      <input *ngIf="movimiento.tipo === 'salida'" [(ngModel)]="movimiento.persona"
+                        placeholder="Persona (Opcional)" />
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <button (click)="registrarMovimiento()" class="btn-dark">Confirmar Movimiento</button>
+                      <button (click)="mostrarFormMov = false">Cancelar</button>
+                    </div>
                   </div>
-                  <div style="display: flex; gap: 0.5rem;">
-                    <button (click)="registrarMovimiento()" class="btn-dark">Confirmar Movimiento</button>
-                    <button (click)="mostrarFormMov = false">Cancelar</button>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </ng-container>
-        </tbody>
-      </table>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
       </div>
-      
+
       <p *ngIf="filteredMateriales.length === 0" style="text-align: center; margin-top: 2rem; color: #666;">
         No hay materiales que coincidan con la búsqueda.
       </p>
@@ -235,38 +249,39 @@
         <h3>Historial Reciente de Movimientos</h3>
         <div class="actions">
           <button (click)="cargarHistorial()">🔄 Actualizar Historial</button>
-          <button (click)="descargarPDFMovimientos()" class="btn-pdf" style="background: #805ad5;">🔀 Exportar Historial PDF</button>
+          <button (click)="descargarPDFMovimientos()" class="btn-pdf" style="background: #805ad5;">🔀 Exportar Historial
+            PDF</button>
         </div>
       </div>
       <div class="table-responsive" style="margin-bottom: 5rem;">
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Producto</th>
-            <th>Tipo</th>
-            <th>Cant.</th>
-            <th>Empresa</th>
-            <th>Persona</th>
-            <th>Motivo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let h of historial">
-            <td>{{ h.fecha | date:'dd/MM/yyyy' }}</td>
-            <td>{{ h.materialId?.nombre || 'Borrados' }}</td>
-            <td>
-              <b [style.color]="h.tipo === 'entrada' ? '#2f855a' : '#e53e3e'">
-                {{ h.tipo | uppercase }}
-              </b>
-            </td>
-            <td>{{ h.cantidad }}</td>
-            <td>{{ h.empresa || '-' }}</td>
-            <td>{{ h.persona || '-' }}</td>
-            <td>{{ h.motivo }}</td>
-          </tr>
-        </tbody>
-      </table>
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Producto</th>
+              <th>Tipo</th>
+              <th>Cant.</th>
+              <th>Empresa</th>
+              <th>Persona</th>
+              <th>Motivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of historial">
+              <td>{{ h.fecha | date:'dd/MM/yyyy' }}</td>
+              <td>{{ h.materialId?.nombre || 'Borrados' }}</td>
+              <td>
+                <b [style.color]="h.tipo === 'entrada' ? '#2f855a' : '#e53e3e'">
+                  {{ h.tipo | uppercase }}
+                </b>
+              </td>
+              <td>{{ h.cantidad }}</td>
+              <td>{{ h.empresa || '-' }}</td>
+              <td>{{ h.persona || '-' }}</td>
+              <td>{{ h.motivo }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
     </div>
