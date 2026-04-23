@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const materialSchema = new mongoose.Schema({
+  codigo: { type: String, unique: true },
   nombre: { type: String, required: true, index: true },
   categoria: { type: String, required: true, index: true },
   stock: { type: Number, default: 0 },

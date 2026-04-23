@@ -13,10 +13,33 @@ import autoTable from 'jspdf-autotable';
   imports: [CommonModule, FormsModule],
   templateUrl: './home.html',
   styles: [`
-    .dashboard { padding: 2rem; max-width: 1100px; margin: 0 auto; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #fafafa; min-height: 100vh; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; border-bottom: 2px solid #eee; padding-bottom: 1rem; }
-    .header h1 { color: #1a202c; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.025em; }
-    .actions { display: flex; gap: 0.75rem; }
+    /* NEW LAYOUT STYLES */
+    :host { display: block; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f4f6f9; min-height: 100vh; }
+    .app-layout { display: flex; min-height: 100vh; }
+    
+    /* SIDEBAR */
+    .sidebar { width: 250px; background: #002b5e; color: white; display: flex; flex-direction: column; transition: all 0.3s; }
+    .sidebar-header { padding: 1.5rem; display: flex; align-items: center; gap: 10px; background: #001f44; border-bottom: 1px solid #003366; }
+    .sidebar-logo { height: 40px; border-radius: 8px; }
+    .sidebar-header h2 { font-size: 1.1rem; margin: 0; font-weight: 700; letter-spacing: 0.5px; }
+    .sidebar-menu { list-style: none; padding: 0; margin: 0; flex: 1; }
+    .sidebar-menu li { border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .sidebar-menu a { display: flex; align-items: center; padding: 1rem 1.5rem; color: #a0aec0; text-decoration: none; font-weight: 500; transition: all 0.2s; cursor: pointer; }
+    .sidebar-menu a:hover, .sidebar-menu a.active { background: #004080; color: white; border-left: 4px solid #4299e1; }
+    .sidebar-menu a .icon { margin-right: 12px; font-size: 1.2rem; }
+    
+    /* MAIN CONTENT */
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow-x: hidden; }
+    .topbar { background: #0088ff; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .topbar h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+    .user-badge { background: rgba(255,255,255,0.2); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; }
+    
+    .dashboard-content { padding: 2rem; }
+    
+    /* ORIGINAL STYLES ADAPTED */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .header h3 { color: #1a202c; font-size: 1.4rem; font-weight: 700; margin: 0; }
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
     
     table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     th, td { padding: 1.25rem 1rem; text-align: left; }
@@ -30,33 +53,42 @@ import autoTable from 'jspdf-autotable';
     .badge-error { background: #feb2b2; color: #9b2c2c; }
     .badge-success { background: #c6f6d5; color: #22543d; }
 
-    button { padding: 0.2rem 1.0rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid #e2e8f0; background: white; color: #4a5568; font-size: 0.85rem; }
+    button { padding: 0.4rem 1.0rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid #e2e8f0; background: white; color: #4a5568; font-size: 0.85rem; }
     button:hover { background: #edf2f7; transform: translateY(-1px); }
     .btn-dark { background: #1a202c; color: white; border: none; }
     .btn-pdf { background: #2f855a; color: white; border: none; }
+    .btn-excel { background: #276749; color: white; border: none; }
     .btn-refresh { background: #3182ce; color: white; border: none; }
     .btn-danger { background: #e53e3e; color: white; border: none; }
 
-    .form-box { background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2.5rem; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .form-box { background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
     .grid { display: grid; grid-template-cols: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
     input, select { padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; outline: none; }
     
+    .search-input { width: 100%; max-width: 400px; margin-bottom: 1rem; padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid #cbd5e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
     .cat-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
     .cat-item { background: #edf2f7; padding: 0.4rem 0.8rem; border-radius: 20px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
     .cat-del { color: #e53e3e; cursor: pointer; font-weight: bold; }
     
     .table-responsive { width: 100%; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .table-responsive table { box-shadow: none; } /* Remove shadow from inner table to avoid double shadow */
+    .table-responsive table { box-shadow: none; }
+
+    /* TYPE COLORS FOR SELECT */
+    .color-entrada { color: #2f855a !important; font-weight: bold; }
+    .color-salida { color: #e53e3e !important; font-weight: bold; }
 
     @media (max-width: 768px) {
-      .header-main { flex-direction: column; align-items: flex-start !important; gap: 1.5rem !important; }
-      .header-main .actions { flex-wrap: wrap; justify-content: flex-start; }
-      .header-main img { height: 70px !important; }
-      .header-main h1 { font-size: 1.5rem !important; }
-      .dashboard { padding: 1rem; }
+      .app-layout { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; }
+      .sidebar-menu { display: flex; overflow-x: auto; }
+      .sidebar-menu a { padding: 0.75rem 1rem; white-space: nowrap; border-left: none; border-bottom: 4px solid transparent; }
+      .sidebar-menu a:hover, .sidebar-menu a.active { border-left: none; border-bottom: 4px solid #4299e1; }
+      .dashboard-content { padding: 1rem; }
       .grid { grid-template-cols: 1fr; }
       .form-box { padding: 1.25rem; }
     }
+  `]
   `]
 })
 export class HomePage implements OnInit {
@@ -64,10 +96,68 @@ export class HomePage implements OnInit {
   categorias: Categoria[] = [];
   historial: any[] = [];
 
-  nuevo = { nombre: '', categoria: '', unidad: 'unidades', alertaMinima: 5 };
+  nuevo = { nombre: '', categoria: '', stock: 0, unidad: 'Unidad', alertaMinima: 5 };
   nuevaCat = { nombre: '' };
   editando: Material | null = null;
   movimiento = { materialId: '', tipo: 'entrada', cantidad: 0, motivo: '', empresa: '', persona: '', fecha: new Date().toISOString().split('T')[0] };
+
+  // Search and selection
+  searchTerm = '';
+  selectedIds = new Set<string>();
+
+  get filteredMateriales() {
+    if (!this.searchTerm) return this.materiales;
+    const lower = this.searchTerm.toLowerCase();
+    return this.materiales.filter(m => 
+      m.nombre.toLowerCase().includes(lower) || 
+      (m.codigo && m.codigo.toLowerCase().includes(lower)) ||
+      m.categoria.toLowerCase().includes(lower)
+    );
+  }
+
+  toggleSelection(id: string) {
+    if (this.selectedIds.has(id)) {
+      this.selectedIds.delete(id);
+    } else {
+      this.selectedIds.add(id);
+    }
+  }
+
+  toggleAll() {
+    if (this.selectedIds.size === this.filteredMateriales.length) {
+      this.selectedIds.clear();
+    } else {
+      this.filteredMateriales.forEach(m => {
+        if (m._id) this.selectedIds.add(m._id);
+      });
+    }
+  }
+
+  isAllSelected() {
+    return this.filteredMateriales.length > 0 && this.selectedIds.size === this.filteredMateriales.length;
+  }
+
+  exportarExcel() {
+    const items = this.selectedIds.size > 0 
+      ? this.materiales.filter(m => m._id && this.selectedIds.has(m._id))
+      : this.materiales;
+    
+    if (items.length === 0) {
+      alert('No hay items para exportar');
+      return;
+    }
+
+    let csv = 'CÓDIGO,NOMBRE,CATEGORÍA,STOCK,UNIDAD,ALERTA MÍNIMA\n';
+    items.forEach(m => {
+      csv += `${m.codigo || ''},${m.nombre},${m.categoria},${m.stock},${m.unidad},${m.alertaMinima}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'inventario.csv';
+    link.click();
+  }
 
   // Edición de perfil de usuario
   mostrarEditarPerfil = false;
@@ -131,7 +221,6 @@ export class HomePage implements OnInit {
 
   crearCategoria() {
     if (!this.nuevaCat.nombre) return;
-    console.log('Creando categoría:', this.nuevaCat.nombre);
     this.inv.crearCategoria(this.nuevaCat).subscribe(() => {
       this.cargarCategorias();
       this.nuevaCat.nombre = '';
@@ -147,6 +236,7 @@ export class HomePage implements OnInit {
 
   abrirEditar(m: Material) {
     this.editando = { ...m };
+    this.mostrarFormMov = false; // Exclusive tab behavior
     this.mostrarFormMaterial = true;
   }
 
@@ -159,7 +249,7 @@ export class HomePage implements OnInit {
     } else {
       this.inv.crearMaterial(this.nuevo).subscribe(() => {
         this.cargar();
-        this.nuevo = { nombre: '', categoria: '', unidad: 'unidades', alertaMinima: 5 };
+        this.nuevo = { nombre: '', categoria: '', stock: 0, unidad: 'Unidad', alertaMinima: 5 };
         this.mostrarFormMaterial = false;
       });
     }
@@ -178,6 +268,7 @@ export class HomePage implements OnInit {
 
   abrirMovimiento(m: Material) {
     this.movimiento.materialId = m._id!;
+    this.editando = null; // Exclusive tab behavior
     this.mostrarFormMov = true;
     this.cdr.detectChanges();
   }
@@ -228,11 +319,20 @@ export class HomePage implements OnInit {
   }
 
   descargarPDF() {
+    const items = this.selectedIds.size > 0 
+      ? this.materiales.filter(m => m._id && this.selectedIds.has(m._id))
+      : this.materiales;
+
+    if (items.length === 0) {
+      alert('No hay items para exportar');
+      return;
+    }
+
     const doc = new jsPDF();
-    doc.text('Reporte de Inventario Total', 14, 15);
-    const data = this.materiales.map(m => [m.nombre, m.categoria, m.stock, m.unidad, m.stock <= m.alertaMinima ? 'BAJO STOCK' : 'OK']);
-    autoTable(doc, { startY: 20, head: [['Nombre', 'Categoría', 'Stock', 'Unidad', 'Estado']], body: data });
-    doc.save('inventario-total.pdf');
+    doc.text('Reporte de Inventario', 14, 15);
+    const data = items.map(m => [m.codigo || '-', m.nombre, m.categoria, m.stock, m.unidad, m.stock <= m.alertaMinima ? 'BAJO STOCK' : 'OK']);
+    autoTable(doc, { startY: 20, head: [['Código', 'Nombre', 'Categoría', 'Stock', 'Unidad', 'Estado']], body: data });
+    doc.save('inventario.pdf');
   }
 
   descargarPDFMovimientos() {

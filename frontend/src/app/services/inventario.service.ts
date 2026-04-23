@@ -4,6 +4,7 @@ import { API_BASE_URL } from './api.config';
 
 export interface Material {
   _id?: string;
+  codigo?: string;
   nombre: string;
   categoria: string;
   stock: number;

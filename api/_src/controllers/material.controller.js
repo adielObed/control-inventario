@@ -30,10 +30,21 @@ exports.createMaterial = async (req, res) => {
   try {
     const { nombre, categoria, stock, alertaMinima, unidad } = req.body;
 
+    // Generar código automático de 4 dígitos
+    const lastMaterial = await Material.findOne({}, {}, { sort: { codigo: -1 } });
+    let nextCode = '0001';
+    if (lastMaterial && lastMaterial.codigo) {
+      const currentNum = parseInt(lastMaterial.codigo, 10);
+      if (!isNaN(currentNum)) {
+        nextCode = String(currentNum + 1).padStart(4, '0');
+      }
+    }
+
     const material = await Material.create({
+      codigo: nextCode,
       nombre,
       categoria,
-      stock,
+      stock: stock || 0,
       alertaMinima,
       unidad
     });
